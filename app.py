@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from functools import wraps
 from config import Config
-from models import db, Project, Message, Skill, Experience, Certification, Testimonial
+from models import db, Project, Message, Skill, Experience, Certification, Testimonial, SocialLink
 from flask_mail import Mail, Message as MailMessage
 
 app = Flask(__name__)
@@ -260,6 +260,41 @@ def create_message():
         print("Email sending failed:", e)
 
     return jsonify({'message': 'Message sent successfully'}), 201
+
+
+# ---------- SOCIAL LINKS ----------
+
+@app.route('/api/social-links', methods=['GET'])
+def get_social_links():
+    links = SocialLink.query.all()
+    return jsonify([l.to_dict() for l in links])
+
+@app.route('/api/social-links', methods=['POST'])
+@require_admin
+def create_social_link():
+    data = request.get_json()
+    new_link = SocialLink(platform=data['platform'], url=data['url'])
+    db.session.add(new_link)
+    db.session.commit()
+    return jsonify(new_link.to_dict()), 201
+
+@app.route('/api/social-links/<int:id>', methods=['PUT'])
+@require_admin
+def update_social_link(id):
+    link = SocialLink.query.get_or_404(id)
+    data = request.get_json()
+    link.platform = data.get('platform', link.platform)
+    link.url = data.get('url', link.url)
+    db.session.commit()
+    return jsonify(link.to_dict())
+
+@app.route('/api/social-links/<int:id>', methods=['DELETE'])
+@require_admin
+def delete_social_link(id):
+    link = SocialLink.query.get_or_404(id)
+    db.session.delete(link)
+    db.session.commit()
+    return jsonify({'message': 'Social link deleted'})
 
 
 import os

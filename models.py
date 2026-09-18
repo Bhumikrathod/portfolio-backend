@@ -98,3 +98,16 @@ class Testimonial(db.Model):
             'role': self.role,
             'message': self.message
         }
+
+class SocialLink(db.Model):
+    __tablename__ = 'social_links'
+    id = db.Column(db.Integer, primary_key=True)
+    platform = db.Column(db.String(50), nullable=False)   # e.g. "GitHub", "LinkedIn", "Instagram", "YouTube"
+    url = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'platform': self.platform,
+            'url': self.url
+        }

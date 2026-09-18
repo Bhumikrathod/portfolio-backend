@@ -1,6 +1,6 @@
 import requests
 
-BASE = "http://127.0.0.1:5000/api"
+BASE = "https://portfolio-backend-gyug.onrender.com/api"
 
 # Pehle login karke token lo
 login_res = requests.post(f"{BASE}/admin/login", json={"password": "Bhumika@123"})
