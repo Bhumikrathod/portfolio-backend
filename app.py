@@ -298,16 +298,16 @@ def delete_social_link(id):
 
 # ---------- VIDEOS ----------
 
-@app.route('/api/videos', methods=['GET'])
-def get_videos():
-    videos = Video.query.all()
-    return jsonify([v.to_dict() for v in videos])
-
 @app.route('/api/videos', methods=['POST'])
 @require_admin
 def create_video():
     data = request.get_json()
-    new_video = Video(title=data['title'], platform=data['platform'], url=data['url'])
+    new_video = Video(
+        title=data['title'],
+        platform=data['platform'],
+        url=data['url'],
+        thumbnail_url=data.get('thumbnail_url', '')
+    )
     db.session.add(new_video)
     db.session.commit()
     return jsonify(new_video.to_dict()), 201
@@ -320,17 +320,9 @@ def update_video(id):
     video.title = data.get('title', video.title)
     video.platform = data.get('platform', video.platform)
     video.url = data.get('url', video.url)
+    video.thumbnail_url = data.get('thumbnail_url', video.thumbnail_url)
     db.session.commit()
     return jsonify(video.to_dict())
-
-@app.route('/api/videos/<int:id>', methods=['DELETE'])
-@require_admin
-def delete_video(id):
-    video = Video.query.get_or_404(id)
-    db.session.delete(video)
-    db.session.commit()
-    return jsonify({'message': 'Video deleted'})
-
 
 import os
 

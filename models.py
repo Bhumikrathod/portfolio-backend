@@ -116,13 +116,15 @@ class Video(db.Model):
     __tablename__ = 'videos'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
-    platform = db.Column(db.String(50), nullable=False)   # "YouTube", "Instagram", "Other"
+    platform = db.Column(db.String(50), nullable=False)
     url = db.Column(db.String(500), nullable=False)
+    thumbnail_url = db.Column(db.String(500))
 
     def to_dict(self):
         return {
             'id': self.id,
             'title': self.title,
             'platform': self.platform,
-            'url': self.url
+            'url': self.url,
+            'thumbnail_url': self.thumbnail_url
         }
