@@ -111,3 +111,18 @@ class SocialLink(db.Model):
             'platform': self.platform,
             'url': self.url
         }
+
+class Video(db.Model):
+    __tablename__ = 'videos'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    platform = db.Column(db.String(50), nullable=False)   # "YouTube", "Instagram", "Other"
+    url = db.Column(db.String(500), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'platform': self.platform,
+            'url': self.url
+        }

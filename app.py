@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from functools import wraps
 from config import Config
-from models import db, Project, Message, Skill, Experience, Certification, Testimonial, SocialLink
+from models import db, Project, Message, Skill, Experience, Certification, Testimonial, SocialLink, Video
 from flask_mail import Mail, Message as MailMessage
 
 app = Flask(__name__)
@@ -295,6 +295,41 @@ def delete_social_link(id):
     db.session.delete(link)
     db.session.commit()
     return jsonify({'message': 'Social link deleted'})
+
+# ---------- VIDEOS ----------
+
+@app.route('/api/videos', methods=['GET'])
+def get_videos():
+    videos = Video.query.all()
+    return jsonify([v.to_dict() for v in videos])
+
+@app.route('/api/videos', methods=['POST'])
+@require_admin
+def create_video():
+    data = request.get_json()
+    new_video = Video(title=data['title'], platform=data['platform'], url=data['url'])
+    db.session.add(new_video)
+    db.session.commit()
+    return jsonify(new_video.to_dict()), 201
+
+@app.route('/api/videos/<int:id>', methods=['PUT'])
+@require_admin
+def update_video(id):
+    video = Video.query.get_or_404(id)
+    data = request.get_json()
+    video.title = data.get('title', video.title)
+    video.platform = data.get('platform', video.platform)
+    video.url = data.get('url', video.url)
+    db.session.commit()
+    return jsonify(video.to_dict())
+
+@app.route('/api/videos/<int:id>', methods=['DELETE'])
+@require_admin
+def delete_video(id):
+    video = Video.query.get_or_404(id)
+    db.session.delete(video)
+    db.session.commit()
+    return jsonify({'message': 'Video deleted'})
 
 
 import os
